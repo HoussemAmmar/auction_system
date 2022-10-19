@@ -14,6 +14,10 @@ export class CreateUserDto {
   @IsNotEmpty()
   address: string;
 
+  @IsString()
+  @IsNotEmpty()
+  phoneNumber: string;
+
   @IsNotEmpty()
   @Transform(({ value }) => new Date(value))
   @IsDate()
@@ -27,14 +31,19 @@ export class UpdateUserProfileDto {
 
   @IsString()
   @IsOptional()
-  lastName?: string;
+  lastName: string;
 
   @IsString()
   @IsOptional()
-  address?: string;
+  address: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  phoneNumber: string;
 
   @IsOptional()
   @Transform(({ value }) => new Date(value))
   @IsDate()
-  birthday?: Date;
+  birthday: Date;
 }
