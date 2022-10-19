@@ -27,5 +27,8 @@ export class Auth extends AbstractModel {
 }
 
 const AuthSchema = SchemaFactory.createForClass(Auth);
-
+AuthSchema.index(
+  { email: 1 },
+  { unique: true, collation: { locale: 'en', strength: 2 } },
+);
 export { AuthSchema };
