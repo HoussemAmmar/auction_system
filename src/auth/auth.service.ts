@@ -1,12 +1,20 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AbstractService } from '../abstract/abstract.service';
 import { Auth } from './auth.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
-import { CreateUserWithEmailAndPasswordDto } from './auth.dto';
-import { SignUpResponseType } from './auth.type';
+import {
+  CreateUserWithEmailAndPasswordDto,
+  LoginWithEmailAndPasswordDto,
+} from './auth.dto';
+import { AccessTokenResponseType } from './auth.type';
 import * as crypto from 'crypto';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
@@ -25,7 +33,7 @@ export class AuthService extends AbstractService<Auth> {
 
   async signUpWithEmailAndPassword(
     createUserWithEmailAndPasswordDto: CreateUserWithEmailAndPasswordDto,
-  ): Promise<SignUpResponseType> {
+  ): Promise<AccessTokenResponseType> {
     let auth = await this.findOne(
       {
         email: createUserWithEmailAndPasswordDto.email,
@@ -57,13 +65,39 @@ export class AuthService extends AbstractService<Auth> {
     return { access_token };
   }
 
+  async loginWithEmailAndPassword(
+    loginWithEmailAndPasswordDto: LoginWithEmailAndPasswordDto,
+  ): Promise<AccessTokenResponseType> {
+    const auth = await this.findOne(
+      { email: loginWithEmailAndPasswordDto.email },
+      null,
+      {
+        collation: { locale: 'en', strength: 2 },
+      },
+    );
+    if (!auth) throw new BadRequestException('INVALID_EMAIL');
+    try {
+      this.verifyHash(auth.password, loginWithEmailAndPasswordDto.password);
+    } catch (e) {
+      throw new BadRequestException('WRONG_PASSWORD');
+    }
+
+    const access_token = this.accessToken(auth);
+    return { access_token };
+  }
+
   hash(token: string) {
     return crypto.createHash('sha256').update(token).digest('base64');
   }
 
-  accessToken(auth: Auth, user: Types.ObjectId) {
+  verifyHash(hashedToken: string, token: string) {
+    const newHashedRefreshToken = this.hash(token);
+    if (newHashedRefreshToken != hashedToken) throw new UnauthorizedException();
+  }
+
+  accessToken(auth: Auth, user?: Types.ObjectId) {
     return this.jwtService.sign(
-      { _id: auth._id, user: user._id },
+      { _id: auth._id, user: user ? user._id : auth.user },
       {
         secret: process.env.JWT_ACCESS_TOKEN_SECRET,
         expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRATION_TIME,

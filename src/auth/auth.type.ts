@@ -1,3 +1,3 @@
-export class SignUpResponseType {
+export class AccessTokenResponseType {
   access_token: string;
 }
