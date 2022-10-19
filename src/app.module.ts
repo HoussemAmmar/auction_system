@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import * as winston from 'winston';
 import { WinstonModule } from 'nest-winston';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ItemModule } from './item/item.module';
 import { AuthModule } from './auth/auth.module';
 
 @Module({
@@ -33,6 +34,7 @@ import { AuthModule } from './auth/auth.module';
     }),
     AuthModule,
     UserModule,
+    ItemModule,
   ],
   controllers: [AppController],
   providers: [AppService],

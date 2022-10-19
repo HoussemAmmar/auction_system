@@ -1,4 +1,4 @@
-import { Body, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { AbstractService } from '../abstract/abstract.service';
 import { User } from './user.schema';
 import { Model, Types } from 'mongoose';
