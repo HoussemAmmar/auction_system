@@ -8,11 +8,11 @@ import * as winston from 'winston';
 import { WinstonModule } from 'nest-winston';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ItemModule } from './item/item.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
-    UserModule,
-    ConfigModule.forRoot({  isGlobal: true }),
+    ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRoot(process.env.MONGO_URL, {
       useUnifiedTopology: true,
       minPoolSize: 20,
@@ -32,6 +32,8 @@ import { ItemModule } from './item/item.module';
         }),
       ],
     }),
+    AuthModule,
+    UserModule,
     ItemModule,
   ],
   controllers: [AppController],
