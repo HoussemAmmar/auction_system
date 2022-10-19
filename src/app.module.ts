@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import * as winston from 'winston';
 import { WinstonModule } from 'nest-winston';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ItemModule } from './item/item.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { MongooseModule } from '@nestjs/mongoose';
         }),
       ],
     }),
+    ItemModule,
   ],
   controllers: [AppController],
   providers: [AppService],
