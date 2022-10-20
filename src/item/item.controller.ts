@@ -1,24 +1,27 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { ObjectId } from 'mongodb';
+import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
 import { StatusEnum } from 'src/types/item.types';
 import { CreateItemDto } from './item.dto';
 import { ItemService } from './item.service';
 import { ResponseObject } from '../abstract/response.object';
 import { Item } from './item.schema';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
 @Controller('item')
 export class ItemController {
   constructor(private itemService: ItemService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post('')
-  async createItem(@Body() item: CreateItemDto): Promise<ResponseObject<Item>> {
-    const user = new ObjectId('635015011b4ccbb3b5a2c706');
+  async createItem(
+    @Body() item: CreateItemDto,
+    @Request() req,
+  ): Promise<ResponseObject<Item>> {
     const data = await this.itemService.create({
       ...item,
-      user,
-      highestPrice : item.startedPrice,
+      user: req.auth.user,
+      highestPrice: item.startedPrice,
       status: StatusEnum.drafted,
     });
-    return new ResponseObject('ITem_UPDATED', data);
+    return new ResponseObject('ITEM_CREATED', data);
   }
 }
