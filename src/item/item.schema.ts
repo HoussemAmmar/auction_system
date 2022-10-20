@@ -33,7 +33,7 @@ export class Item extends AbstractModel {
   highestPrice: PriceMap;
 
   @Prop({ required: true, enum: StatusEnum, default: StatusEnum.drafted })
-  status: string;
+  status: StatusEnum;
 
   @Prop({ required: false, type: SchemaTypes.Date })
   timeWindow: Date;
