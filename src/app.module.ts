@@ -13,6 +13,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ItemModule } from './item/item.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtStrategy } from './guards/jwt.strategy';
+import { BullModule } from '@nestjs/bull';
 
 @Module({
   imports: [
@@ -38,6 +39,13 @@ import { JwtStrategy } from './guards/jwt.strategy';
           ),
         }),
       ],
+    }),
+    BullModule.forRoot({
+      redis: {
+        host: process.env.BULL_REDIS_HOST,
+        port: parseInt(process.env.BULL_REDIS_PORT),
+        password: process.env.BULL_REDIS_PASSWORD,
+      },
     }),
     AuthModule,
     UserModule,
