@@ -7,9 +7,12 @@ import {
   IsNumber,
   IsString,
   ValidateNested,
-  IsObject, IsDate,
+  IsObject,
+  IsMongoId,
+  IsDateString,
 } from 'class-validator';
-import {Transform, Type} from 'class-transformer';
+import { Type } from 'class-transformer';
+import { Types } from 'mongoose';
 
 export class PriceDto {
   @IsNumber()
@@ -33,9 +36,13 @@ export class CreateItemDto {
   @Type(() => PriceDto)
   startedPrice: PriceMap;
 
-
   @IsNotEmpty()
-  @Transform(({ value }) => new Date(value))
-  @IsDate()
+  @IsDateString()
   timeWindow: Date;
+}
+
+export class IdDto {
+  @IsMongoId()
+  @IsNotEmpty()
+  id: Types.ObjectId;
 }
