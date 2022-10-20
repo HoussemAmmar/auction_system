@@ -4,32 +4,33 @@ import {
   Get,
   Patch,
   Request,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ResponseObject } from '../abstract/response.object';
 import { User } from './user.schema';
 import { UpdateUserProfileDto } from './user.dto';
-import { Types } from 'mongoose';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @Get('')
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
   async getUserProfile(@Request() req): Promise<ResponseObject<User>> {
-    const data = await this.userService.findById(
-      new Types.ObjectId(req.headers._id),
-    );
+    const data = await this.userService.findById(req.auth.user);
     return new ResponseObject('FOUND_USER', data);
   }
 
-  @Patch('')
+  @UseGuards(JwtAuthGuard)
+  @Patch('profile')
   async updateUserProfile(
     @Request() req,
     @Body() updateUserProfileDto: UpdateUserProfileDto,
   ): Promise<ResponseObject<User>> {
     const data = await this.userService.findByIdAndUpdate(
-      new Types.ObjectId(req.headers._id),
+      req.auth.user,
       updateUserProfileDto,
     );
 
