@@ -1,21 +1,60 @@
 import {
   Body,
   Controller,
+  Get,
   Param,
   Post,
+  Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
 import { StatusEnum } from 'src/types/item.types';
-import { CreateItemDto, IdDto, PriceDto } from './item.dto';
+import { CreateItemDto, FilterItems, IdDto, PriceDto } from './item.dto';
 import { ItemService } from './item.service';
 import { ResponseObject } from '../abstract/response.object';
 import { Item } from './item.schema';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { PaginationDto } from 'src/abstract/pagination.dto';
 
 @Controller('item')
 export class ItemController {
   constructor(private itemService: ItemService) {}
+
+  @Get('completed-items')
+  async getCompletedItems(
+    @Query() filterItems: FilterItems,
+  ): Promise<ResponseObject<Item[]>> {
+    const data = await this.itemService.find(
+      {
+        status: StatusEnum.completed,
+      },
+      null,
+      {
+        skip: filterItems.skip,
+        limit: filterItems.limit,
+      },
+      {
+        createdAt: filterItems?.latest,
+        'highestPrice.amount': filterItems?.highest,
+      },
+    );
+    return new ResponseObject('ITEMS_FOUND', data);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('')
+  async getOngoingCompletedItems(
+    @Query() pagination: PaginationDto,
+  ): Promise<ResponseObject<Item[]>> {
+    const data = await this.itemService.find(
+      {
+        status: { $ne: StatusEnum.drafted },
+      },
+      null,
+      { ...pagination },
+    );
+    return new ResponseObject('ITEMS_FOUND', data);
+  }
 
   @UseGuards(JwtAuthGuard)
   @Post('')

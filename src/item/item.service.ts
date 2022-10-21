@@ -33,7 +33,7 @@ export class ItemService extends AbstractService<Item> {
           input: '$bids',
           as: 'bids',
           cond: {
-            $eq: ['$$bids.user', user],
+            $eq: ['$$bids.user', new Types.ObjectId(user)],
           },
         },
       },
@@ -53,8 +53,12 @@ export class ItemService extends AbstractService<Item> {
 
     const lastUserBid = item.bids.pop();
     const timeBidDifference =
-      (new Date().getTime() - lastUserBid.createdAt.getTime()) / 1000;
-    if (timeBidDifference < 5) {
+      (new Date().getTime() -
+        (lastUserBid ? lastUserBid.createdAt.getTime() : 0)) /
+      1000;
+
+    console.log(timeBidDifference);
+    if (timeBidDifference < 5 && item.bids.length > 0) {
       throw new ForbiddenException('Bid again after 5 seconds ');
     }
 

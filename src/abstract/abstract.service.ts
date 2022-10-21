@@ -64,10 +64,13 @@ export abstract class AbstractService<T extends AbstractModel> {
     filterQuery: FilterQuery<T>,
     projection?: any | null,
     options?: QueryOptions | null,
+    sortField?: any,
   ): Promise<T[]> {
     let data;
     try {
-      data = await this.model.find(filterQuery, projection, options);
+      data = await this.model
+        .find(filterQuery, projection, options)
+        .sort({ ...sortField });
     } catch (e) {
       throw new InternalServerErrorException(e.message);
     }
