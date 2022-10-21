@@ -12,7 +12,6 @@ import { ItemService } from './item.service';
 import { ResponseObject } from '../abstract/response.object';
 import { Item } from './item.schema';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-import { Types } from 'mongoose';
 
 @Controller('item')
 export class ItemController {
@@ -33,6 +32,21 @@ export class ItemController {
     return new ResponseObject('ITEM_CREATED', data);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Post('/publish/:id')
+  async publishItem(
+    @Param() params: IdDto,
+    @Request() req,
+  ): Promise<ResponseObject<Item>> {
+    await this.itemService.updateOne(
+      { _id: params.id, user: req.auth.user, timeWindow: { $gte: new Date() } },
+      { status: StatusEnum.ongoing },
+      {},
+      'TIME_WINDOW_EXPIRED',
+    );
+    return new ResponseObject('ITEM_PUBLISHED');
+  }
+
   // bid on an item
 
   @UseGuards(JwtAuthGuard)
@@ -40,10 +54,14 @@ export class ItemController {
   async bidOnItem(
     @Body() bid: PriceDto,
     @Param() params: IdDto,
+    @Request() req,
   ): Promise<ResponseObject<Item>> {
     console.log(params.id);
-    const user = new Types.ObjectId('635015011b4ccbb3b5a2c706');
-    const data = await this.itemService.bidOnItem(params.id, user, bid);
+    const data = await this.itemService.bidOnItem(
+      params.id,
+      req.auth.user,
+      bid,
+    );
     return new ResponseObject('ITEM_BID', data);
   }
 }
