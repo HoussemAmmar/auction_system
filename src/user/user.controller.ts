@@ -11,8 +11,10 @@ import { ResponseObject } from '../abstract/response.object';
 import { User } from './user.schema';
 import { UpdateUserProfileDto } from './user.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('user')
+@ApiTags('User')
 export class UserController {
   constructor(private userService: UserService) {}
 

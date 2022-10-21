@@ -58,9 +58,12 @@ describe('Auction system: bid on an item  (e2e)', () => {
                 winston.format.ms(),
                 winston.format.timestamp(),
                 winston.format.json(),
-                nestWinstonModuleUtilities.format.nestLike('AUCTION-API', {
-                  prettyPrint: true,
-                }),
+                nestWinstonModuleUtilities.format.nestLike(
+                  'Auction_System-APIs',
+                  {
+                    prettyPrint: true,
+                  },
+                ),
                 winston.format.align(),
                 winston.format.colorize({ all: true }),
               ),

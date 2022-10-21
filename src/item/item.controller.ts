@@ -15,8 +15,10 @@ import { ResponseObject } from '../abstract/response.object';
 import { Item } from './item.schema';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { PaginationDto } from '../abstract/pagination.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('item')
+@ApiTags('Item')
 export class ItemController {
   constructor(private itemService: ItemService) {}
 

@@ -6,8 +6,10 @@ import {
   CreateUserWithEmailAndPasswordDto,
   LoginWithEmailAndPasswordDto,
 } from './auth.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('auth')
+@ApiTags('Authentication')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
