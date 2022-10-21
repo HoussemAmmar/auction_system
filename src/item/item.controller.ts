@@ -8,13 +8,13 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { StatusEnum } from 'src/types/item.types';
+import { StatusEnum } from '../types/item.types';
 import { CreateItemDto, FilterItems, IdDto, PriceDto } from './item.dto';
 import { ItemService } from './item.service';
 import { ResponseObject } from '../abstract/response.object';
 import { Item } from './item.schema';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-import { PaginationDto } from 'src/abstract/pagination.dto';
+import { PaginationDto } from '../abstract/pagination.dto';
 
 @Controller('item')
 export class ItemController {
@@ -95,7 +95,6 @@ export class ItemController {
     @Param() params: IdDto,
     @Request() req,
   ): Promise<ResponseObject<Item>> {
-    console.log(params.id);
     const data = await this.itemService.bidOnItem(
       params.id,
       req.auth.user,
