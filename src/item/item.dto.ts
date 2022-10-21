@@ -1,4 +1,4 @@
-import { CurrencyEnum, PriceMap } from '../types/item.types';
+import { CurrencyEnum } from '../types/item.types';
 import {
   IsDefined,
   IsEnum,
@@ -31,29 +31,29 @@ export class PriceDto {
 }
 
 export class CreateItemDto {
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  @ApiProperty()
   name: string;
 
+  @ApiProperty()
   @IsObject()
   @IsDefined()
   @ValidateNested()
   @IsNotEmptyObject()
   @Type(() => PriceDto)
-  @ApiProperty()
   startedPrice: PriceDto;
 
+  @ApiProperty({ example: '2022-10-24T15:04:14.322+00:00' })
   @IsNotEmpty()
   @IsDateString()
-  @ApiProperty()
   timeWindow: Date;
 }
 
 export class IdDto {
+  @ApiProperty()
   @IsMongoId()
   @IsNotEmpty()
-  @ApiProperty({ example: new Types.ObjectId() })
   id: Types.ObjectId;
 }
 

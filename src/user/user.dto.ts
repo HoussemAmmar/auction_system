@@ -3,58 +3,58 @@ import { Transform } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateUserDto {
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  @ApiProperty()
   firstName: string;
 
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  @ApiProperty()
   lastName: string;
 
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  @ApiProperty()
   address: string;
 
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  @ApiProperty()
   phoneNumber: string;
 
+  @ApiProperty({ example: '2022-10-24T15:04:14.322+00:00' })
   @IsNotEmpty()
   @Transform(({ value }) => new Date(value))
   @IsDate()
-  @ApiProperty()
   birthday: Date;
 }
 
 export class UpdateUserProfileDto {
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
-  @ApiPropertyOptional()
   firstName?: string;
 
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
-  @ApiPropertyOptional()
   lastName?: string;
 
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
-  @ApiPropertyOptional()
   address?: string;
 
+  @ApiPropertyOptional()
   @IsString()
   @IsNotEmpty()
   @IsOptional()
-  @ApiPropertyOptional()
   phoneNumber?: string;
 
+  @ApiPropertyOptional()
   @IsOptional()
   @Transform(({ value }) => new Date(value))
   @IsDate()
-  @ApiPropertyOptional()
   birthday?: Date;
 }

@@ -21,7 +21,7 @@ export class AuthController {
     const res = await this.authService.signUpWithEmailAndPassword(
       createUserWithEmailAndPasswordDto,
     );
-    return new ResponseObject('SIGNUP_SUCCESS', res);
+    return new ResponseObject('SIGNUP_SUCCEEDED', res);
   }
 
   @Post('login')
@@ -31,6 +31,6 @@ export class AuthController {
     const data = await this.authService.loginWithEmailAndPassword(
       loginWithEmailAndPasswordDto,
     );
-    return new ResponseObject('LOGIN_SUCCESS', data);
+    return new ResponseObject('LOGIN_SUCCEEDED', data);
   }
 }

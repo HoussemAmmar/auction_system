@@ -40,11 +40,13 @@ export class ItemService extends AbstractService<Item> {
     });
 
     if (item.status === StatusEnum.drafted) {
-      throw new ForbiddenException('You cannot bid item is not published');
+      throw new ForbiddenException(
+        "You cannot bid on item ,it's not yet published",
+      );
     }
 
     if (new Date().getTime() >= item.timeWindow.getTime()) {
-      throw new ForbiddenException('Bid is over ');
+      throw new ForbiddenException('Bid is over');
     }
     // for now we only have one currency
     if (item.highestPrice.amount >= bid.amount) {
@@ -57,9 +59,8 @@ export class ItemService extends AbstractService<Item> {
         (lastUserBid ? lastUserBid.createdAt.getTime() : 0)) /
       1000;
 
-    console.log(timeBidDifference);
     if (timeBidDifference < 5 && item.bids.length > 0) {
-      throw new ForbiddenException('Bid again after 5 seconds ');
+      throw new ForbiddenException('Bid again after 5 seconds');
     }
 
     return await this.findByIdAndUpdate(id, {

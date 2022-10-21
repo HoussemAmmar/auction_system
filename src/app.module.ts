@@ -31,7 +31,7 @@ import { BullModule } from '@nestjs/bull';
             winston.format.ms(),
             winston.format.timestamp(),
             winston.format.json(),
-            nestWinstonModuleUtilities.format.nestLike('AUCTION-API', {
+            nestWinstonModuleUtilities.format.nestLike('AUCTION-SYSTEM', {
               prettyPrint: true,
             }),
             winston.format.align(),
