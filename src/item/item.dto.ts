@@ -10,9 +10,12 @@ import {
   IsObject,
   IsMongoId,
   IsDateString,
+  IsOptional,
+  IsInt,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { Types } from 'mongoose';
+import { PaginationDto } from '../abstract/pagination.dto';
 
 export class PriceDto {
   @IsNumber()
@@ -45,4 +48,20 @@ export class IdDto {
   @IsMongoId()
   @IsNotEmpty()
   id: Types.ObjectId;
+}
+
+export class FilterItems extends PaginationDto {
+  @Type(() => Number)
+  @IsInt()
+  @IsEnum([1, -1])
+  @IsNotEmpty()
+  @IsOptional()
+  latest: number;
+
+  @Type(() => Number)
+  @IsInt()
+  @IsEnum([1, -1])
+  @IsNotEmpty()
+  @IsOptional()
+  highest: number;
 }
