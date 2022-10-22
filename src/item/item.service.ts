@@ -5,20 +5,56 @@ import { Model, Types } from 'mongoose';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
 import { Item } from './item.schema';
-import { PriceDto } from './item.dto';
+import { CreateItemDto, PriceDto } from './item.dto';
 import { StatusEnum } from '../types/item.types';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
 
 @Injectable()
 export class ItemService extends AbstractService<Item> {
   constructor(
     @InjectModel(Item.name) private itemModel: Model<Item>,
+    @InjectQueue('item') private itemQueue: Queue,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {
     super(itemModel, logger);
   }
   protected modelName = Item.name;
 
-  async bidOnItem(id: Types.ObjectId, user: Types.ObjectId, bid: PriceDto) {
+  async createItem(user: Types.ObjectId, item: CreateItemDto): Promise<Item> {
+    if (new Date().getTime() >= new Date(item.timeWindow).getTime()) {
+      throw new ForbiddenException('Time window cannot be in the past');
+    }
+    const data = await this.create({
+      ...item,
+      user,
+      highestPrice: item.startedPrice,
+      status: StatusEnum.drafted,
+    });
+    const timeToChangeStatus =
+      new Date(item.timeWindow).getTime() - new Date().getTime();
+
+    console.log(timeToChangeStatus);
+    await this.itemQueue.add(
+      'status-completed',
+      {
+        _id: data._id,
+      },
+      {
+        removeOnComplete: true,
+        attempts: 3,
+        delay: timeToChangeStatus,
+      },
+    );
+
+    return data;
+  }
+
+  async bidOnItem(
+    id: Types.ObjectId,
+    user: Types.ObjectId,
+    bid: PriceDto,
+  ): Promise<Item> {
     const item = await this.findById(id, {
       name: 1,
       user: 1,
