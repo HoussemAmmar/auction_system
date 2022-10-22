@@ -44,7 +44,7 @@ export class CreateItemDto {
   @Type(() => PriceDto)
   startedPrice: PriceDto;
 
-  @ApiProperty({ example: '2022-10-24T15:04:14.322+00:00' })
+  @ApiProperty({ example: '2022-10-24T15:04:14.322' })
   @IsNotEmpty()
   @IsDateString()
   timeWindow: Date;
@@ -65,12 +65,4 @@ export class FilterItems extends PaginationDto {
   @IsOptional()
   @ApiPropertyOptional()
   latest: number;
-
-  @Type(() => Number)
-  @IsInt()
-  @IsEnum([1, -1])
-  @IsNotEmpty()
-  @IsOptional()
-  @ApiPropertyOptional()
-  highest: number;
 }

@@ -14,7 +14,6 @@ import { ItemService } from './item.service';
 import { ResponseObject } from '../abstract/response.object';
 import { Item } from './item.schema';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-import { PaginationDto } from '../abstract/pagination.dto';
 import { ApiTags } from '@nestjs/swagger';
 
 @Controller('item')
@@ -22,6 +21,28 @@ import { ApiTags } from '@nestjs/swagger';
 export class ItemController {
   constructor(private itemService: ItemService) {}
 
+  @UseGuards(JwtAuthGuard)
+  @Get('')
+  async getOngoingCompletedItems(
+    @Query() filterItems: FilterItems,
+  ): Promise<ResponseObject<Item[]>> {
+    const data = await this.itemService.find(
+      {
+        status: { $ne: StatusEnum.drafted },
+      },
+      null,
+      {
+        skip: filterItems.skip,
+        limit: filterItems.limit,
+      },
+      {
+        createdAt: filterItems?.latest,
+      },
+    );
+    return new ResponseObject('ITEMS_FOUND', data);
+  }
+
+  // for guests
   @Get('completed-items')
   async getCompletedItems(
     @Query() filterItems: FilterItems,
@@ -37,23 +58,7 @@ export class ItemController {
       },
       {
         createdAt: filterItems?.latest,
-        'highestPrice.amount': filterItems?.highest,
       },
-    );
-    return new ResponseObject('ITEMS_FOUND', data);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Get('')
-  async getOngoingCompletedItems(
-    @Query() pagination: PaginationDto,
-  ): Promise<ResponseObject<Item[]>> {
-    const data = await this.itemService.find(
-      {
-        status: { $ne: StatusEnum.drafted },
-      },
-      null,
-      { ...pagination },
     );
     return new ResponseObject('ITEMS_FOUND', data);
   }
@@ -64,12 +69,7 @@ export class ItemController {
     @Body() item: CreateItemDto,
     @Request() req,
   ): Promise<ResponseObject<Item>> {
-    const data = await this.itemService.create({
-      ...item,
-      user: req.auth.user,
-      highestPrice: item.startedPrice,
-      status: StatusEnum.drafted,
-    });
+    const data = await this.itemService.createItem(req.auth.user, item);
     return new ResponseObject('ITEM_CREATED', data);
   }
 

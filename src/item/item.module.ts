@@ -10,7 +10,7 @@ import { ItemConsumer } from './item.consumer';
   imports: [
     MongooseModule.forFeature([{ name: Item.name, schema: ItemSchema }]),
     BullModule.registerQueue({
-      name: 'item-queue',
+      name: 'item',
     }),
   ],
   controllers: [ItemController],

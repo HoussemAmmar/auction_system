@@ -23,7 +23,7 @@ export class CreateUserDto {
   @IsNotEmpty()
   phoneNumber: string;
 
-  @ApiProperty({ example: '2022-10-24T15:04:14.322+00:00' })
+  @ApiProperty({ example: '2022-10-24T15:04:14.322' })
   @IsNotEmpty()
   @Transform(({ value }) => new Date(value))
   @IsDate()
