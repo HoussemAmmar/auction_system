@@ -40,7 +40,7 @@ $ npm run test:e2e
 
 
 # Details
-##Structure
+## Structure
 #### The backend consists of 3 Modules :
 
 - Auth module responsible for login and sign up user , compares the user's information against entries in a database to meet the authentication criteria.
@@ -48,7 +48,7 @@ $ npm run test:e2e
 - Item module than contains the logic of the application , auction system , item creation and bid scenarios.
 > **NOTE :**  The user deposit the money in the request handler and later will be handled by a third party payment service along with currencies exchange
 
-##Abstract Concept
+## Abstract Concept
 
 - Even though it's a prototype-oriented  TypeScript, most of the elements are based on objects, and it utilizes Object-Oriented Programming (OOP) in its own ways.
 
@@ -56,7 +56,8 @@ $ npm run test:e2e
 
 - All modules inherit from abstract module to use common methods that will always be improved and modified with time in  order to have less  , clearer and readable code.
 
-##Queues using Redis 
+## Queues using Redis 
+
 When the time window expires and the bid is over an automatic task have to update item status to completed
 - Deployed a Redis database in the cloud (link in .env file)
 - Implemented bull Queuing for the job in Item module
